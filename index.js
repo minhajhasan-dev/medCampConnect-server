@@ -52,6 +52,7 @@ async function run() {
     const campsCollection = db.collection("Camps");
     const usersCollection = db.collection("users");
     const bookingCollection = db.collection("bookings");
+    const feedbackCollection = db.collection("feedbacks");
 
     // verify Organizer middleware
     const verifyOrganizer = async (req, res, next) => {
@@ -251,6 +252,69 @@ async function run() {
         res.send(result);
       }
     );
+
+    // get all booking data for organizer
+    app.get("/bookings", verifyToken, verifyOrganizer, async (req, res) => {
+      const result = await bookingCollection.find({}).toArray();
+      res.send(result);
+    });
+
+    // get all booking data for participant
+    app.get(
+      "/bookings/:email",
+      verifyToken,
+      verifyParticipant,
+      async (req, res) => {
+        const email = req.params.email;
+        const query = { participant_email: email };
+        const result = await bookingCollection.find(query).toArray();
+        res.send(result);
+      }
+    );
+    // update the participants count by 1 in camp collection by patch
+    app.patch("/camp/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $inc: {
+          participant_count: 1,
+        },
+      };
+      const result = await campsCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+    // participant statistics api
+    app.get(
+      "/participant-stats/:email",
+      verifyToken,
+      verifyParticipant,
+      async (req, res) => {
+        // get total fees paid by the participant and total camps joined by the participant
+        const email = req.user.email;
+        const query = { participant_email: email };
+        const result = await bookingCollection.find(query).toArray();
+        const totalFees = result.reduce(
+          (acc, curr) => acc + parseFloat(curr.camp_fees),
+          0
+        );
+        const totalCamps = result.length;
+
+        // chart data by react google chart api
+        const chartData = result.map((camp) => {
+          return [camp.camp_name, parseFloat(camp.camp_fees)];
+        });
+        chartData.unshift(["Camp", "Fees"]);
+        res.send({ totalFees, totalCamps, chartData });
+      }
+    );
+
+    // save feedback data in db
+    app.post("/feedbacks", async (req, res) => {
+      const feedbackData = req.body;
+      const result = await feedbackCollection.insertOne(feedbackData);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
