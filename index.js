@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
+const axios = require("axios"); // added last
 const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
@@ -263,7 +264,7 @@ async function run() {
     app.get(
       "/bookings/:email",
       verifyToken,
-      verifyParticipant,
+      // verifyParticipant,
       async (req, res) => {
         const email = req.params.email;
         const query = { participant_email: email };
@@ -314,6 +315,43 @@ async function run() {
       const feedbackData = req.body;
       const result = await feedbackCollection.insertOne(feedbackData);
       res.send(result);
+    });
+
+    // get all feedbacks from db
+    app.get("/feedbacks", verifyToken, async (req, res) => {
+      const result = await feedbackCollection.find({}).toArray();
+      res.send(result);
+    });
+
+    // get all feedback data from db using campId
+    app.get("/feedback/:campId", async (req, res) => {
+      const campId = req.params.campId;
+      const query = { campId };
+      const result = await feedbackCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //get a single bookingInfo with the email addres and campId to show in the bookingRow
+    app.get("/booking/:email/:campId", async (req, res) => {
+      const email = req.params.email;
+      const campId = req.params.campId;
+      const query = { participant_email: email, campId };
+      const result = await bookingCollection.findOne(query);
+      res.send(result);
+    });
+
+    // imgbb related
+    app.post("/upload", async (req, res) => {
+      try {
+        const response = await axios.post(
+          "https://api.imgbb.com/1/upload",
+          req.body
+        );
+        res.send(response.data);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Error uploading image" });
+      }
     });
 
     // Send a ping to confirm a successful connection
