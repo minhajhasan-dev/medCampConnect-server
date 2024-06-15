@@ -54,6 +54,7 @@ async function run() {
     const usersCollection = db.collection("users");
     const bookingCollection = db.collection("bookings");
     const feedbackCollection = db.collection("feedbacks");
+    const sliderCollection = db.collection("SliderData");
 
     // verify Organizer middleware
     const verifyOrganizer = async (req, res, next) => {
@@ -134,9 +135,10 @@ async function run() {
       res.send(payments);
     });
 
-    // save a user data in db
+    // save a user data in db with email, name, role, photo and timestamp
     app.put("/user", async (req, res) => {
       const user = req.body;
+      console.log(req.body);
       // chack if user already exist in db
       const isExist = await usersCollection.findOne({ email: user.email });
       if (isExist) {
@@ -318,7 +320,7 @@ async function run() {
     });
 
     // get all feedbacks from db
-    app.get("/feedbacks", verifyToken, async (req, res) => {
+    app.get("/feedbacks", async (req, res) => {
       const result = await feedbackCollection.find({}).toArray();
       res.send(result);
     });
@@ -340,6 +342,15 @@ async function run() {
       res.send(result);
     });
 
+    // delete a single bnookingInfo with email address and campId from db
+    app.delete("/booking/:email/:campId", async (req, res) => {
+      const email = req.params.email;
+      const campId = req.params.campId;
+      const query = { participant_email: email, campId };
+      const result = await bookingCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // imgbb related
     app.post("/upload", async (req, res) => {
       try {
@@ -352,6 +363,12 @@ async function run() {
         console.error(error);
         res.status(500).send({ message: "Error uploading image" });
       }
+    });
+
+    // load SliderData from db
+    app.get("/slider", async (req, res) => {
+      const result = await sliderCollection.find({}).toArray();
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
