@@ -13,10 +13,12 @@ This is the server-side code for MedCamp Connect, a platform that connects medic
 
 ## Packages Used
 
-- [Express](https://expressjs.com/): Fast, unopinionated, minimalist web framework for Node.js
-- [Mongoose](https://mongoosejs.com/): Elegant mongodb object modeling for node.js
-- [bcrypt](https://www.npmjs.com/package/bcrypt): A library to help you hash passwords
+- [axios](https://www.npmjs.com/package/axios): Promise based HTTP client for the browser and node.js
+- [cookie-parser](https://www.npmjs.com/package/cookie-parser): Parse Cookie header and populate `req.cookies` with an object keyed by the cookie names
+- [cors](https://www.npmjs.com/package/cors): Middleware that can be used to enable CORS with various options
+- [dotenv](https://www.npmjs.com/package/dotenv): Loads environment variables from a `.env` file into `process.env`
+- [express](https://expressjs.com/): Fast, unopinionated, minimalist web framework for Node.js
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken): An implementation of JSON Web Tokens
-- [multer](https://www.npmjs.com/package/multer): A middleware for handling `multipart/form-data`, which is primarily used for uploading files
-- [nodemailer](https://nodemailer.com/about/): A module for Node.js applications to allow easy email sending
-
+- [moment](https://momentjs.com/): Parse, validate, manipulate, and display dates and times in JavaScript
+- [mongodb](https://www.mongodb.com/): The official MongoDB driver for Node.js
+- [stripe](https://stripe.com/docs/stripe-js): Stripe is a suite of payment APIs that powers commerce for businesses of all sizes
