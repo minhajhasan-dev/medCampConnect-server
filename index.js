@@ -366,18 +366,6 @@ async function run() {
     });
 
     // imgbb related
-    app.post("/upload", async (req, res) => {
-      try {
-        const response = await axios.post(
-          "https://api.imgbb.com/1/upload",
-          req.body
-        );
-        res.send(response.data);
-      } catch (error) {
-        console.error(error);
-        res.status(500).send({ message: "Error uploading image" });
-      }
-    });
 
     // load SliderData from db
     app.get("/slider", async (req, res) => {
