@@ -327,7 +327,11 @@ async function run() {
     );
 
     // save feedback data in db
-
+    app.post("/feedbacks", async (req, res) => {
+      const feedbackData = req.body;
+      const result = await feedbackCollection.insertOne(feedbackData);
+      res.send(result);
+    });
 
     // get all feedbacks from db
     app.get("/feedbacks", async (req, res) => {
