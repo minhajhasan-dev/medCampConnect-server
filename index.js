@@ -256,6 +256,20 @@ async function run() {
       }
     );
 
+    // update profile data in db
+    app.put("/update-profile/:email", async (req, res) => {
+      const email = req.params.email;
+      const updatedProfile = req.body;
+      const query = { email };
+      const updateDoc = {
+        $set: {
+          ...updatedProfile,
+        },
+      };
+      const result = await usersCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
     // get all booking data for organizer
     app.get("/bookings", verifyToken, verifyOrganizer, async (req, res) => {
       const result = await bookingCollection.find({}).toArray();
