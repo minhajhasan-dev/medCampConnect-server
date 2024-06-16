@@ -15,6 +15,7 @@ const corsOptions = {
     "http://localhost:5173",
     "http://localhost:5174",
     "http://medcampconnect-server.vercel.app",
+    "https://medcampconnect-server-4r5psljjq-minhaj-hasans-projects.vercel.app",
     "https://medcampconnect-5fdc3.web.app",
   ],
   credentials: true,
