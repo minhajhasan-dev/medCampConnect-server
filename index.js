@@ -9,21 +9,17 @@ const app = express();
 const axios = require("axios"); // added last
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-var corsOptions = {
-  origin: [
-    "https://medcampconnect-5fdc3.web.app",
-    "http://localhost:5173",
-    "https://medcampconnect-5fdc3.firebaseapp.com",
-    "https://localhost:5174",
-    "https://medcampconnect.netlify.app",
-    "https://medcampconnect-server.vercel.app",
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
-};
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: [
+      "https://medcampconnect-5fdc3.web.app",
+      "http://localhost:5173",
+      "https://medcampconnect-5fdc3.firebaseapp.com",
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -105,13 +101,9 @@ async function run() {
       console.log(process.env.NODE_ENV);
     });
 
-    // get jwt
-    app.get("/jwt", verifyToken, async (req, res) => {
-      res.send({ success: true });
-    });
 
     // Logout
-    app.get("/logout", async (req, res) => {
+    app.post("/logout", async (req, res) => {
       try {
         res
           .clearCookie("token", {
@@ -401,10 +393,10 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
   }
