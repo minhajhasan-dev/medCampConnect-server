@@ -1,7 +1,7 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 require("dotenv").config();
-const cors = require("cors");
 const axios = require("axios"); // added last
 const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -12,15 +12,17 @@ const port = process.env.PORT || 8000;
 // middleware
 const corsOptions = {
   origin: [
+    "https://medcampconnect-5fdc3.web.app",
+    "https://medcampconnect-5fdc3.firebaseapp.com/",
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://medcampconnect-5fdc3.web.app",
   ],
   credentials: true,
-  optionSuccessStatus: 200,
+  optionsSuccessStatus: 200,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 };
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
