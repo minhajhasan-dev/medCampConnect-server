@@ -1,30 +1,42 @@
 const express = require("express");
-const cors = require("cors");
-const app = express();
-require("dotenv").config();
-const axios = require("axios"); // added last
-const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const cookieParser = require("cookie-parser");
+require("dotenv").config();
 const port = process.env.PORT || 8000;
+const app = express();
+const axios = require("axios"); // added last
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-// middleware
-const corsOptions = {
+var corsOptions = {
   origin: [
     "https://medcampconnect-5fdc3.web.app",
-    "https://medcampconnect-5fdc3.firebaseapp.com/",
     "http://localhost:5173",
-    "http://localhost:5174",
+    "https://medcampconnect-5fdc3.firebaseapp.com",
+    "https://localhost:5174",
+    "https://medcampconnect.netlify.app",
+    "https://medcampconnect-server.vercel.app",
   ],
   credentials: true,
   optionsSuccessStatus: 200,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
 };
-
 app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.uqfy7cb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
 // Verify Token Middleware
 const verifyToken = async (req, res, next) => {
@@ -42,16 +54,6 @@ const verifyToken = async (req, res, next) => {
     next();
   });
 };
-
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.uqfy7cb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
 
 async function run() {
   try {
@@ -100,7 +102,14 @@ async function run() {
           sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
         })
         .send({ success: true });
+      console.log(process.env.NODE_ENV);
     });
+
+    // get jwt
+    app.get("/jwt", verifyToken, async (req, res) => {
+      res.send({ success: true });
+    });
+
     // Logout
     app.get("/logout", async (req, res) => {
       try {
