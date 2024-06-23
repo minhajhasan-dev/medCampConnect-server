@@ -101,7 +101,6 @@ async function run() {
       console.log(process.env.NODE_ENV);
     });
 
-
     // Logout
     app.post("/logout", async (req, res) => {
       try {
@@ -369,6 +368,20 @@ async function run() {
       const campId = req.params.campId;
       const query = { participant_email: email, campId };
       const result = await bookingCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // patch feedback_given: true to a single bookingInfo with email address and campId from db
+    app.patch("/booking/:email/:campId", async (req, res) => {
+      const email = req.params.email;
+      const campId = req.params.campId;
+      const query = { participant_email: email, campId };
+      const updateDoc = {
+        $set: {
+          feedback_given: true,
+        },
+      };
+      const result = await bookingCollection.updateOne(query, updateDoc);
       res.send(result);
     });
 
