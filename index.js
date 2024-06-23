@@ -371,20 +371,6 @@ async function run() {
       res.send(result);
     });
 
-    // patch feedback_given: true to a single bookingInfo with email address and campId from db
-    app.patch("/booking/:email/:campId", async (req, res) => {
-      const email = req.params.email;
-      const campId = req.params.campId;
-      const query = { participant_email: email, campId };
-      const updateDoc = {
-        $set: {
-          feedback_given: true,
-        },
-      };
-      const result = await bookingCollection.updateOne(query, updateDoc);
-      res.send(result);
-    });
-
     // imgbb related
     app.post("/upload", async (req, res) => {
       try {
